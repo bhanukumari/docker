@@ -1,0 +1,22 @@
+pipeline {
+    agent any
+     stages {
+        stage('clone') {
+       steps {
+       git branch: 'main', url: 'https://github.com/bhanukumari/docker'
+     }
+      }
+       stage('build') {
+       steps {
+        // Install dependencies using Composer
+        sh 'composer install --ignore-platform-reqs'
+     }
+      }
+      stage('Test') {
+    steps {
+        // Run PHPUnit tests
+        sh 'vendor/bin/phpunit'
+    }
+}
+     }
+}
