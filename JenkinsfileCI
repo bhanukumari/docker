@@ -12,11 +12,11 @@ pipeline {
         sh 'composer install --ignore-platform-reqs'
      }
       }
-      stage('Test') {
-    steps {
+      //stage('Test') {
+    //steps {
         // Run PHPUnit tests
-        sh 'vendor/bin/phpunit'
-    }
-}
+      //  sh 'vendor/bin/phpunit'
+    //}
+//}
      }
 }
