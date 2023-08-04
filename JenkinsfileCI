@@ -17,5 +17,14 @@ pipeline {
             archiveArtifacts artifacts: '**/*.*', followSymlinks: false
         }
       }
+       stage('Trigger Another Pipeline') {
+            steps {
+                    timeout(time: 60, unit: 'SECONDS'){
+                     input 'do you want to apply this plan'
+                     build job: 'phpcd', wait: false
+                    }
+                 }
+       }
      }
+     
 }
