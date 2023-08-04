@@ -9,50 +9,17 @@ pipeline {
         CONTAINER_NAME = 'docker-final'
         PORT_MAPPING = '81:80' 
     }
-
     stages {
-        stage('clone') {
-      steps {
-      git branch: 'main', url: 'https://github.com/bhanukumari/docker'
-     }
-      }
-        //   stage('copy artifact') {
-        //     steps {
-        //   copyArtifacts(projectName: 'ab2', fingerprintArtifacts: true, optional: true)
-        //     }
-        // }
-
-        stage('Build Docker Image') {
-            steps {
-                // Assuming you have already built your Docker image earlier in the pipeline
-                // Replace 'your-docker-image' with your actual image name and tag
-                sh "sudo docker build -t jenkins:${DOCKER_IMAGE_TAG} ."
-            }
-        }
-
-        stage('Login to ECR') {
-            steps {
-                // Login to ECR using the AWS CLI and your AWS credentials
-                sh "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/n1w5e5u8"
-            }
-        }
-
-        stage('Push to ECR') {
+     stage('pull to ECR') {
             steps {
                 // Tag the local Docker image with the ECR repository URL
                 sh "docker tag jenkins:${DOCKER_IMAGE_TAG} ${ECR_REPO_URL}:${DOCKER_IMAGE_TAG}"
 
                 // Push the Docker image to ECR
-                sh "docker push ${ECR_REPO_URL}:${DOCKER_IMAGE_TAG}"
+                sh "docker pull ${ECR_REPO_URL}:${DOCKER_IMAGE_TAG}"
             }
         }
-         stage('check Vulnerability') {
-            steps {
-                sh "trivy image php > scanning.txt "
-            }
-        }
-
-        stage('Start Container') {
+     stage('Start Container') {
             steps {
                 // Pull the Docker image from ECR
                 sh "docker pull ${ECR_REPO_URL}:${DOCKER_IMAGE_TAG}"
@@ -68,6 +35,5 @@ pipeline {
                 sh "docker logout public.ecr.aws/v6y7k9w8/jenkins:latest"
             }
         }
-        
     }
 }
