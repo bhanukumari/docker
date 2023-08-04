@@ -4,7 +4,7 @@ pipeline {
     environment {
         // Set the AWS region and ECR repository URL here
         AWS_DEFAULT_REGION = 'us-east-1'
-        ECR_REPO_URL = "public.ecr.aws/v6y7k9w8/jenkins"
+        ECR_REPO_URL = "public.ecr.aws/n1w5e5u8/jenkins"
         DOCKER_IMAGE_TAG = 'latest'
         CONTAINER_NAME = 'docker-final'
         PORT_MAPPING = '81:80' 
@@ -12,22 +12,28 @@ pipeline {
 
     stages {
         stage('clone') {
-       steps {
-       git branch: 'main', url: 'https://github.com/bhanukumari/docker'
+      steps {
+      git branch: 'main', url: 'https://github.com/bhanukumari/docker'
      }
       }
+        //   stage('copy artifact') {
+        //     steps {
+        //   copyArtifacts(projectName: 'ab2', fingerprintArtifacts: true, optional: true)
+        //     }
+        // }
+
         stage('Build Docker Image') {
             steps {
                 // Assuming you have already built your Docker image earlier in the pipeline
                 // Replace 'your-docker-image' with your actual image name and tag
-                sh "docker build -t jenkins:${DOCKER_IMAGE_TAG} ."
+                sh "sudo docker build -t jenkins:${DOCKER_IMAGE_TAG} ."
             }
         }
 
         stage('Login to ECR') {
             steps {
                 // Login to ECR using the AWS CLI and your AWS credentials
-                sh "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/v6y7k9w8"
+                sh "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/n1w5e5u8"
             }
         }
 
