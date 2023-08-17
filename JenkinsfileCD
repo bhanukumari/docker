@@ -8,17 +8,51 @@ pipeline {
         DOCKER_IMAGE_TAG = 'latest'
         CONTAINER_NAME = 'docker-final'
         PORT_MAPPING = '81:80' 
+        // BUILD_NUMBER = '25'
     }
     stages {
-     stage('pull to ECR') {
+        stage('pull to ECR') {
             steps {
-                // Tag the local Docker image with the ECR repository URL
-                sh "docker tag jenkins:${DOCKER_IMAGE_TAG} ${ECR_REPO_URL}:${DOCKER_IMAGE_TAG}"
-
-                // Push the Docker image to ECR
-                sh "docker pull ${ECR_REPO_URL}:${DOCKER_IMAGE_TAG}"
+                script {
+                    // Request user input for the build numbers
+                    def userInput = input(
+                        id: 'userInput',
+                        message: 'Select build numbers:',
+                        parameters: [
+                            [$class: 'BooleanParameterDefinition', name: 'BUILD_NUMBER_17', defaultValue: false, description: 'Build number 17'],
+                            [$class: 'BooleanParameterDefinition', name: 'BUILD_NUMBER_18', defaultValue: false, description: 'Build number 18'],
+                            // Add more BooleanParameterDefinition for each build number
+                        ]
+                    )
+                    
+                    // Process the selected build numbers
+                    if (userInput.BUILD_NUMBER_17) {
+                        // Tag the local Docker image with the ECR repository URL
+                         sh "docker tag jenkins:${DOCKER_IMAGE_TAG} ${ECR_REPO_URL}:${DOCKER_IMAGE_TAG}"
+                          // Push the Docker image to ECR
+                         sh "docker pull ${ECR_REPO_URL}:${DOCKER_IMAGE_TAG}"
+                    }
+                    if (userInput.BUILD_NUMBER_18) {
+                        // Tag the local Docker image with the ECR repository URL
+                         sh "docker tag jenkins:${DOCKER_IMAGE_TAG} ${ECR_REPO_URL}:${DOCKER_IMAGE_TAG}"
+                          // Push the Docker image to ECR
+                         sh "docker pull ${ECR_REPO_URL}:${DOCKER_IMAGE_TAG}"
+                    }
+                    // Add more conditions for each build number
+                }
             }
         }
+    
+    // stages {
+    //  stage('pull to ECR') {
+    //         steps {
+    //             // Tag the local Docker image with the ECR repository URL
+    //             sh "docker tag jenkins:${DOCKER_IMAGE_TAG} ${ECR_REPO_URL}:${DOCKER_IMAGE_TAG}"
+
+    //             // Push the Docker image to ECR
+    //             sh "docker pull ${ECR_REPO_URL}:${DOCKER_IMAGE_TAG}"
+    //         }
+    //     }
      stage('Start Container') {
             steps {
                 // Pull the Docker image from ECR
